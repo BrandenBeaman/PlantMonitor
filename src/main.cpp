@@ -48,10 +48,11 @@ Connections
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
-// waterStatus.h for soil moisture , updateMister.h for mister control, network.h for WiFi connection
+// waterStatus.h for soil moisture , updateMister.h for mister control, network.h for WiFi connection, buildJson.h for formatting data to send to server
 #include "waterStatus.h"
 #include "updateMister.h"
 #include "network.h"
+#include "buildJson.h"
 
 // DHT sensor type
 #define DHTTYPE DHT11
@@ -148,7 +149,9 @@ void loop() {
 
 
   // Check whether the mister needs to be turned on based on the humidity threshold
-  updateMister(humidity);
+  //updateMister(humidity);
+  buildJsonData(humidity, tempFehrenheit, lux, status);
+  
      
  /*Rough Lux scale:
    Direct sunlight: ~32,000-100,000 lux
