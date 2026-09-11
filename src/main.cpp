@@ -48,17 +48,25 @@ Connections
 #include <WiFi.h>
 #include <ArduinoJson.h>
 
-// waterStatus.h for soil moisture status,
+// waterStatus.h for soil moisture , updateMister.h for mister control, network.h for WiFi connection
 #include "waterStatus.h"
 #include "updateMister.h"
+#include "network.h"
 
+// DHT sensor type
 #define DHTTYPE DHT11
 
+// Pin assignments as per the connections above
 const int SOIL_PIN = 35;
 const int SDA_PIN  = 21;
 const int SCL_PIN  = 22;
 const int DHT_PIN  = 14;
 
+// WiFi credentials
+const char* ssid = "SpectrumSetup-8B"; 
+const char* password = "phoneyacht549"; 
+
+// Variables to hold sensor readings, to be sent to server in JSON format
 float humidity;
 float tempCelsius;
 float tempFehrenheit;
@@ -70,76 +78,77 @@ int readingAttempts = 0;
 
 //Object lightSensor of class BH1750 from BH1750 library 
 BH1750 lightSensor;
+
 //Object dht of class DHT from DHT library, passing in the data pin and the type of DHT
 DHT dht(DHT_PIN, DHTTYPE);
 
 
-//string to display status
+//string to display soil moisture status
 String status;
 
 void setup() {
-
-  //begin serial monitor
-  
+  /* Setup():
+    - Initialize serial Monitor at 115200 baud rate for debugging and monitoring
+    - Initialize Wifi connection using provided SSID and password
+    - Initialize I2C bus for BH1750 light sensor
+    - Start DHT11 sensor
+    - Start BH1750 light sensor
+    - Set MISTER_PIN as OUTPUT for controlling the mister relay, starts LOW (off)
+  */
   Serial.begin(115200);
 
-  //Initialize the I2C bus, setting SDL-GPIO 21 and SCL-GPIO 22
+  connectToWiFi(ssid, password);
+
   Wire.begin(SDA_PIN, SCL_PIN);
 
-  //Start DHT11
   dht.begin();
   Serial.println("Temp and Humidity Sensor Begin"); 
 
-  //Start BH1750
   lightSensor.begin();
   Serial.println("Light Sensor Begin");
 
-  // set MISTER_PIN as OUTPUT mister,  starts low
   pinMode(MISTER_PIN, OUTPUT);
   digitalWrite(MISTER_PIN, LOW);
-
-
 }// setup
 
 void loop() {
-  // 2 sec delay for DHT11, readings from DHT11 take 250 ms
+  // Wait 2 seconds between DHT11 readings; readings take approximately 250 ms
   delay(2000);
 
-  
-  //DHT library reads analing humidity value, stored in humidity variable
-   humidity = dht.readHumidity();
+  // Read humidity and temperature from the DHT11 sensor
+  humidity = dht.readHumidity();
+  tempCelsius = dht.readTemperature();
 
-  //Read temp as Celsius, checks if read failed and convert to Fahrenheit
-   tempCelsius = dht.readTemperature();
-  
-  
-   // check if any reads failed and try up to 3 times before giving up and going back to sleep
+
+  // Check for failed readings and retry up to 3 times
   if (isnan(humidity) || isnan(tempCelsius)) {
     Serial.println("DHT11 failed to read from sensor, trying again");
     readingAttempts = readingAttempts + 1;
-   
-  if(readingAttempts >= 3) {
-    Serial.println("DHT11 failed to read from sensor 3 times, aborting..");
-    readingAttempts = 0;
-    //go back to deep sleep here
-     } // if(){if}    
-     return;
-   }//if
-   else {
+
+    if (readingAttempts >= 3) {
+      Serial.println("DHT11 failed to read from sensor 3 times, aborting..");
+      readingAttempts = 0;
+      // Go back to deep sleep here
+    }
+    return;
+  }
+  else {
     readingAttempts = 0;
     tempFehrenheit = (tempCelsius * 1.8) + 32;
-   }//else
+  }
 
- 
-  //BH1750 library converts analong reading into lux value, stored in lux variable
-   lux = lightSensor.readLightLevel();
 
-  // read RAW mostiure reading
-    rawValue = analogRead(SOIL_PIN);
-   status = updateWaterStatus(rawValue);
+  // Read the light level in lux from the BH1750 sensor
+  lux = lightSensor.readLightLevel();
 
-  //check to see if the mister needs to be turned on based on humidity threshold
- // updateMister(humidity);   
+
+  // Read the raw soil moisture value and determine its status
+  rawValue = analogRead(SOIL_PIN);
+  status = updateWaterStatus(rawValue);
+
+
+  // Check whether the mister needs to be turned on based on the humidity threshold
+  updateMister(humidity);
      
  /*Rough Lux scale:
    Direct sunlight: ~32,000-100,000 lux
