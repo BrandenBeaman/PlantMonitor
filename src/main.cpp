@@ -41,11 +41,12 @@ Connections
 */
 
 /* 
-DHT:         choose DHT and pull readings from the sensor 
-BH1750:     light sensor readings wire library for I2C communication with the BH1750 sensor
-Wifi:       ESP32 WiFi connectivity 
-Json:       formatting data to send to the server
-HTTPClient: sending data to the server
+DHT:              choose DHT and pull readings from the sensor 
+BH1750:           light sensor readings wire library for I2C communication with the BH1750 sensor
+Wifi:             ESP32 WiFi connectivity 
+Json:             formatting data to send to the server
+HTTPClient:       sending data to the server
+WiFiClientSecure: secure connection to the server
 */
 #include "DHT.h"
 #include <BH1750.h>
@@ -53,18 +54,20 @@ HTTPClient: sending data to the server
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ArduinoJson.h>
-#include <HTTPClient.h> // or #include <WiFiClientSecure.h> havent decided if I want to use HTTPS or HTTP, for now using HTTPClient.h for testing
-
+#include <HTTPClient.h> 
+#include <WiFiClientSecure.h> 
 /*
 waterStatus:  soil moisture status
 updateMister: mister control
 network:      WiFi connection
 buildJson:    formatting data to send to the server
+sendData:     sending JSON to server
 */
 #include "waterStatus.h"
 #include "updateMister.h"
 #include "network.h"
 #include "buildJson.h"
+#include "sendData.h"
 
 // DHT sensor type
 #define DHTTYPE DHT11
@@ -77,7 +80,9 @@ const int DHT_PIN  = 14;
 
 // WiFi credentials
 const char* ssid = "SpectrumSetup-8B"; 
-const char* password = "phoneyacht549"; 
+const char* password = "phoneyacht549";
+ 
+// const char* serverURL ( get from dipesh)
 
 // Variables to hold sensor readings, to be sent to server in JSON format
 float humidity;
@@ -95,9 +100,11 @@ BH1750 lightSensor;
 //Object dht of class DHT from DHT library, passing in the data pin and the type of DHT
 DHT dht(DHT_PIN, DHTTYPE);
 
-
 //string to display soil moisture status
 String status;
+
+//strig to hold the JSON formatted data to be sent to the server
+String jsonData;
 
 void setup() {
   /* Setup():
@@ -162,7 +169,7 @@ void loop() {
 
   // Check whether the mister needs to be turned on based on the humidity threshold
   //updateMister(humidity);
-  buildJsonData(humidity, tempFehrenheit, lux, status);
+  jsonData = buildJsonData(humidity, tempFehrenheit, lux, status);
   
      
  /*Rough Lux scale:
