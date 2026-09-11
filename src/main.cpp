@@ -40,15 +40,27 @@ Connections
   -------------------------------------------------------------------------------------------------------------------------------------------------
 */
 
-// From DHT library, BH1750 library. wire library for I2C for BH1750 SDL and SCL, Wifi library for ESP32, Json library for formatting data to send to server
+/* 
+DHT:         choose DHT and pull readings from the sensor 
+BH1750:     light sensor readings wire library for I2C communication with the BH1750 sensor
+Wifi:       ESP32 WiFi connectivity 
+Json:       formatting data to send to the server
+HTTPClient: sending data to the server
+*/
 #include "DHT.h"
 #include <BH1750.h>
 #include <Wire.h>
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ArduinoJson.h>
+#include <HTTPClient.h> // or #include <WiFiClientSecure.h> havent decided if I want to use HTTPS or HTTP, for now using HTTPClient.h for testing
 
-// waterStatus.h for soil moisture , updateMister.h for mister control, network.h for WiFi connection, buildJson.h for formatting data to send to server
+/*
+waterStatus:  soil moisture status
+updateMister: mister control
+network:      WiFi connection
+buildJson:    formatting data to send to the server
+*/
 #include "waterStatus.h"
 #include "updateMister.h"
 #include "network.h"
