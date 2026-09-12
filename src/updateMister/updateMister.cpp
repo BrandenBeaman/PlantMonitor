@@ -20,7 +20,15 @@ const  float HUMIDITY_HIGH = 50.0;  // mister turns off above this value
 
 
     void updateMister(float humidity) {
-   
+
+    // when the DHT11 fails to read force mister off and set mister time out flag
+     if(humidity == 0) {
+      digitalWrite(MISTER_PIN, HIGH);
+      misterTimeOut = true;
+      misterOn = false;
+      Serial.println("Mister OFF: DHT11 READ ERROR");
+     }
+
     // turn off the mister if its been running for more than 2 mins, clear mister state flag, raise max runtime flag
      if((misterOn) &&  ((millis() - misterStartTime) >= MAX_MIST_RUNTIME)) {
        digitalWrite(MISTER_PIN, HIGH);
@@ -29,8 +37,8 @@ const  float HUMIDITY_HIGH = 50.0;  // mister turns off above this value
        misterTimeOut = true; 
        Serial.println("Mister reached MAX run time");
       }                                               
-  
-     // when the humidity drops below set threshold and the mister isnt already on, turn it on, also start tracking time and set flag, cLear run time flag 
+     
+     // when the humidity drops below set threshold and the mister isnt already on, turn it on, also start tracking time and set flag
      if((humidity <= HUMIDITY_LOW) && (!misterOn) && (!misterTimeOut)) {
          digitalWrite(MISTER_PIN, LOW);
 
