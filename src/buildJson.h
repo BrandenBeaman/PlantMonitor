@@ -7,7 +7,7 @@
 
 
 // buildJsonData takes in the sensor readings and soil status and returns a JSON formatted string to be sent to the server
- String buildJsonData(float humidity, float tempFehrenheit, float lux, String soilStatus);
+ String buildJsonData(float humidity, float tempFehrenheit, float lux, String soilStatus, String timeStamp);
 
 
 

@@ -4,19 +4,20 @@
 #include "buildJson.h"
 
 
-String buildJsonData(float humidity, float tempFehrenheit, float lux, String soilStatus) {
+String buildJsonData(float humidity, float tempFehrenheit, float lux, String soilStatus, String timeStamp) {
     
     // creates a JSON document with a capacity of 256 bytes
     JsonDocument doc;
 
     // add the sensor readings and soil status to the JSON document
     doc["humidity"]        = humidity;
-    doc["temp_fahrenheit"] = tempFehrenheit;
+    doc["roomTempF"]       = tempFehrenheit;
     doc["lux"]             = lux;
-    doc["soil_status"]     = soilStatus;
+    doc["soilMoisture"]    = soilStatus;
+    doc["timestamp"]       = timeStamp;
 
     // Convert the JSON document into a formatted string to send to the server
-    // example: {"humidity": 45.0, "temp_fahrenheit": 72.5, "lux": 300.0, "soil_status": "healthyWater"}
+    // example: {"humidity": 45.0, "roomTempF": 72.5, "lux": 300.0, "soilMoisture": "healthyWater", "timestamp": "2026-09-11 14:30:00" }
     String jsonString;
     serializeJson(doc, jsonString);
 

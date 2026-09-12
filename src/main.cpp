@@ -47,6 +47,7 @@ Wifi:             ESP32 WiFi connectivity
 Json:             formatting data to send to the server
 HTTPClient:       sending data to the server
 WiFiClientSecure: secure connection to the server
+time              creating timestamp
 */
 #include "DHT.h"
 #include <BH1750.h>
@@ -56,6 +57,7 @@ WiFiClientSecure: secure connection to the server
 #include <ArduinoJson.h>
 #include <HTTPClient.h> 
 #include <WiFiClientSecure.h> 
+#include <time.h>
 /*
 waterStatus:  soil moisture status
 updateMister: mister control
@@ -101,6 +103,9 @@ DHT dht(DHT_PIN, DHTTYPE);
 
 //string to display soil moisture status
 String status;
+
+//string to hold timestamp
+String timeStamp;
 
 //strig to hold the JSON formatted data to be sent to the server
 String jsonData;
@@ -171,8 +176,12 @@ void loop() {
   updateMister(humidity);
 
   
+  // build time stamp tp send with data
+  timeStamp = getTimestamp();
+
+
   //build JSON body and store it for transportation
-  jsonData = buildJsonData(humidity, tempFehrenheit, lux, status);
+  jsonData = buildJsonData(humidity, tempFehrenheit, lux, status, timeStamp);
   
   Serial.print("Humidity: ");
   Serial.print(humidity);

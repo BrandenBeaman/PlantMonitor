@@ -1,8 +1,21 @@
-// Module implamentation for connecting to WiFi network
-// returns void
+// Module implamentation for connecting to WiFi network  and syncing/retrieving current time
+// returns void / string 
 #include <Arduino.h>
 #include "network.h"
 #include <WiFi.h>
+#include <time.h>
+
+
+// Eastern Time zone offsets (Rochester, NY)
+// gmtOffsetSec: standard time offset from UTC (EST = UTC-5, so -5 * 3600 seconds)
+// daylightOffsetSec: additional offset added during daylight saving time (EDT adds 1 hour = 3600 seconds)
+const long gmtOffsetSec = -5 * 3600;
+const int daylightOffsetSec = 3600;
+
+
+// NTP server used to get accurate current time once online
+const char* ntpServer = "pool.ntp.org";
+
 
 
 void connectToWiFi(const char* ssid, const char* password) {
@@ -29,4 +42,24 @@ void connectToWiFi(const char* ssid, const char* password) {
     Serial.println(ssid);
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
+}
+
+String getTimestamp() {
+    // struct tm holds the broken-down local time (year, month, day, hour, minute, second)
+    struct tm timeInfo;
+
+    // getLocalTime fills timeInfo using the synced clock
+    // returns false if time hasnt been set yet
+    if (!getLocalTime(&timeInfo)) {
+        Serial.println("Failed to obtain time");
+        return "0000-00-00 00:00:00"; // value if time sync hasnt completed
+    }
+
+    // buffer to hold the formatted timestamp string
+    char buffer[20];
+
+    // format timeInfo into "YYYY-MM-DD HH:MM:SS" using strftime
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &timeInfo);
+
+    return String(buffer);
 }
