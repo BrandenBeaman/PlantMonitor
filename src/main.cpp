@@ -82,8 +82,9 @@ const int SDA_PIN  = 21;
 const int SCL_PIN  = 22;
 const int DHT_PIN  = 14;
 
- 
-// const char* serverURL ( get from dipesh)
+// server URL to send data to
+const char* serverURL = "https://webhook.site/ed14ddf1-46ec-47dd-ab28-ae349e7b1a1a";
+
 
 // Variables to hold sensor readings, to be sent to server in JSON format
 float humidity;
@@ -180,8 +181,11 @@ void loop() {
   timeStamp = getTimestamp();
 
 
-  //build JSON body and store it for transportation
+  // build JSON body and store it for transportation
   jsonData = buildJsonData(humidity, tempFehrenheit, lux, status, timeStamp);
+
+  // send JSON payload to server
+  sendData(serverURL, jsonData);
   
   Serial.print("Humidity: ");
   Serial.print(humidity);

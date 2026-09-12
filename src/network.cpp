@@ -42,6 +42,27 @@ void connectToWiFi(const char* ssid, const char* password) {
     Serial.println(ssid);
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
+
+
+    
+    // sync ESP32's internal clock with NTP server, now that WiFi is connected
+    configTime(gmtOffsetSec, daylightOffsetSec, ntpServer);
+    Serial.println("Syncing time with NTP server...");
+
+    // wait until the time has actually been set before continuing
+    struct tm timeInfo;
+    int syncAttempts = 0;
+    while (!getLocalTime(&timeInfo) && syncAttempts < 10) {
+        Serial.println("Waiting for NTP time sync...");
+        delay(500);
+        syncAttempts++;
+    }
+
+    if (syncAttempts >= 10) {
+        Serial.println("NTP time sync failed after multiple attempts");
+    } else {
+        Serial.println("Time synced successfully");
+    }
 }
 
 String getTimestamp() {
