@@ -112,7 +112,7 @@ void setup() {
     - Initialize I2C bus for BH1750 light sensor
     - Start DHT11 sensor
     - Start BH1750 light sensor
-    - Set MISTER_PIN as OUTPUT for controlling the mister relay, starts LOW (off)
+    - Set MISTER_PIN as OUTPUT for controlling the mister, starts HIGH (off)
   */
   Serial.begin(115200);
 
@@ -168,16 +168,12 @@ void loop() {
 
 
   // Check whether the mister needs to be turned on based on the humidity threshold
-  //updateMister(humidity);
+  updateMister(humidity);
+
+  
+  //build JSON body and store it for transportation
   jsonData = buildJsonData(humidity, tempFehrenheit, lux, status);
   
-     
- /*Rough Lux scale:
-   Direct sunlight: ~32,000-100,000 lux
-   Overcast daylight: ~1,000-10,000 lux
-   A well-lit room: ~100-500 lux
-  Dim room/dusk: ~10-50 lux
- */
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.print(" %\t");
