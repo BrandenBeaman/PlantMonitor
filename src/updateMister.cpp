@@ -4,34 +4,35 @@
 #include "updateMister.h"
 
 
-// maxtime mister is allowed to run continuously after boot up (ms) 
-const  unsigned long MAX_MIST_RUNTIME = 100000;   
+// maxtime mister is allowed to run continuously after boot up for 2 mins (ms) 
+const  unsigned long MAX_MIST_RUNTIME = 120000;   
 
 // Humidity thresholds, want spider plant to be between 40% and 60% humidity
 const  float HUMIDITY_LOW  = 40.0;   // mister turns on below this value
 const  float HUMIDITY_HIGH = 50.0;  // mister turns off above this value
 
-// flag for when mister is on
+// flag for when mister is on and for when Mister reached max runtime
        bool misterOn = false;
-
+       bool misterTimeOut = false;
+       
 // track the time the mister has been on, used to turn off after max time has passed
        unsigned long misterStartTime  = 0;
 
 
     void updateMister(float humidity) {
    
-    // turn off the mister if its been running for more than 10 mins, clear mister state flag, raise max runtime flag
+    // turn off the mister if its been running for more than 2 mins, clear mister state flag, raise max runtime flag
      if((misterOn) &&  ((millis() - misterStartTime) >= MAX_MIST_RUNTIME)) {
-       digitalWrite(MISTER_PIN, LOW);
+       digitalWrite(MISTER_PIN, HIGH);
 
        misterOn = false;
-
+       misterTimeOut = true; 
        Serial.println("Mister reached MAX run time");
       }                                               
   
      // when the humidity drops below set threshold and the mister isnt already on, turn it on, also start tracking time and set flag, cLear run time flag 
-     if((humidity <= HUMIDITY_LOW) && (!misterOn)) {
-         digitalWrite(MISTER_PIN, HIGH);
+     if((humidity <= HUMIDITY_LOW) && (!misterOn) && (!misterTimeOut)) {
+         digitalWrite(MISTER_PIN, LOW);
 
          misterStartTime = millis();
          misterOn = true;
@@ -42,7 +43,7 @@ const  float HUMIDITY_HIGH = 50.0;  // mister turns off above this value
 
     // when humidity is above the thresthold and the mister is on turn it off and clear flag
      else if((humidity >= HUMIDITY_HIGH) && (misterOn)) {
-        digitalWrite(MISTER_PIN, LOW);  
+        digitalWrite(MISTER_PIN, HIGH);  
 
         misterOn = false;
      }

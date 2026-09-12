@@ -28,7 +28,7 @@ Connections
 
   Mister:
   POWER - V to Boost Converter VIN+ and GND to Boost Converter VOUT+ 
-  PROGRAM: V to VCC, S to GPIO 5, GND to GND
+  PROGRAM: V to VCC, S(Active LOW) to GPIO 5, GND to GND
 
   Boost Converter:
   VIN+ to LiPo Battery VCC
@@ -128,7 +128,7 @@ void setup() {
   Serial.println("Light Sensor Begin");
 
   pinMode(MISTER_PIN, OUTPUT);
-  digitalWrite(MISTER_PIN, LOW);
+  digitalWrite(MISTER_PIN, HIGH);
 }// setup
 
 void loop() {

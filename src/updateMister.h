@@ -14,6 +14,7 @@ const int MISTER_PIN = 5;
 
 // flag for when mister is on
 extern bool misterOn;
+extern bool misterTimeOut;
 
 
 void updateMister(float humidity);
