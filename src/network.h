@@ -12,7 +12,7 @@
 
 void connectToWiFi(const char* ssid, const char* password);
 
-//void sendDataToServer(const char* serverUrl, float humidity, float tempFehrenheit
+
 
 
 #endif // NETWORK_H 
