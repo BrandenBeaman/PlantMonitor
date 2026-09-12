@@ -111,15 +111,32 @@ String timeStamp;
 //strig to hold the JSON formatted data to be sent to the server
 String jsonData;
 
+
 void setup() {
   /* Setup():
+    Initialization:
     - Initialize serial Monitor at 115200 baud rate for debugging and monitoring
     - Initialize Wifi connection using provided SSID and password
     - Initialize I2C bus for BH1750 light sensor
     - Start DHT11 sensor
     - Start BH1750 light sensor
     - Set MISTER_PIN as OUTPUT for controlling the mister, starts HIGH (off)
+
+    Data Collection:
+    -Wait 2 seconds to let DHT11 get acurate readings
+    -Read Humidity and Temp from DHT11 and convert to F
+    -Read lux from BH1750
+    -Read soil Mostiure reading and determine water Status based on it
+
+    Mister Control and POST:
+    -Turn the Mister ON or OFF based on humidity reading, max run time for mister is 2 mins
+    -Build a time stamp to send with DATA
+    -Build JSON payload
+    -Send payload to serverURL
+    
   */
+
+//INITIALIZATION --------------------------------------------------------------------------------------------
   Serial.begin(115200);
 
   //credentials are stored in credentials.h
@@ -135,16 +152,15 @@ void setup() {
 
   pinMode(MISTER_PIN, OUTPUT);
   digitalWrite(MISTER_PIN, HIGH);
-}// setup
 
-void loop() {
+//DATA COLLLECTION ---------------------------------------------------------------------------------------------
+
   // Wait 2 seconds between DHT11 readings; readings take approximately 250 ms
   delay(2000);
 
   // Read humidity and temperature from the DHT11 sensor
   humidity = dht.readHumidity();
   tempCelsius = dht.readTemperature();
-
 
   // Check for failed readings and retry up to 3 times
   if (isnan(humidity) || isnan(tempCelsius)) {
@@ -163,7 +179,6 @@ void loop() {
     tempFehrenheit = (tempCelsius * 1.8) + 32;
   }
 
-
   // Read the light level in lux from the BH1750 sensor
   lux = lightSensor.readLightLevel();
 
@@ -172,11 +187,11 @@ void loop() {
   rawValue = analogRead(SOIL_PIN);
   status = updateWaterStatus(rawValue);
 
+//MISTER CONTROL & POST ---------------------------------------------------------------------------------------------
 
   // Check whether the mister needs to be turned on based on the humidity threshold
   updateMister(humidity);
 
-  
   // build time stamp tp send with data
   timeStamp = getTimestamp();
 
@@ -187,6 +202,7 @@ void loop() {
   // send JSON payload to server
   sendData(serverURL, jsonData);
   
+//PRINTS FOR DEBUG/TESTING---------------------------------------------------------------------------------------------
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.print(" %\t");
@@ -205,5 +221,9 @@ void loop() {
 
   Serial.print("Mister State: ");
   Serial.println(misterOn);
-}//loop
+}// setup
+
+void loop() {
+  return;
+}
  
