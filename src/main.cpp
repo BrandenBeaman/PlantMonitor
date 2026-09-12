@@ -66,11 +66,11 @@ buildJson:    formatting data to send to the server
 sendData:     sending JSON to server
 credentials:  stores wifi credentials
 */
-#include "waterStatus.h"
-#include "updateMister.h"
-#include "network.h"
-#include "buildJson.h"
-#include "sendData.h"
+#include "waterStatus/waterStatus.h"
+#include "updateMister/updateMister.h"
+#include "network/network.h"
+#include "buildJson/buildJson.h"
+#include "sendData/sendData.h"
 #include "credentials.h"
 
 // DHT sensor type
