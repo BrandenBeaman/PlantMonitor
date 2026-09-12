@@ -62,12 +62,14 @@ updateMister: mister control
 network:      WiFi connection
 buildJson:    formatting data to send to the server
 sendData:     sending JSON to server
+credentials:  stores wifi credentials
 */
 #include "waterStatus.h"
 #include "updateMister.h"
 #include "network.h"
 #include "buildJson.h"
 #include "sendData.h"
+#include "credentials.h"
 
 // DHT sensor type
 #define DHTTYPE DHT11
@@ -78,9 +80,6 @@ const int SDA_PIN  = 21;
 const int SCL_PIN  = 22;
 const int DHT_PIN  = 14;
 
-// WiFi credentials
-const char* ssid = "SpectrumSetup-8B"; 
-const char* password = "phoneyacht549";
  
 // const char* serverURL ( get from dipesh)
 
@@ -117,6 +116,7 @@ void setup() {
   */
   Serial.begin(115200);
 
+  //credentials are stored in credentials.h
   connectToWiFi(ssid, password);
 
   Wire.begin(SDA_PIN, SCL_PIN);
