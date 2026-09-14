@@ -48,7 +48,7 @@ Wifi:             ESP32 WiFi connectivity
 Json:             formatting data to send to the server
 HTTPClient:       sending data to the server
 WiFiClientSecure: secure connection to the server
-time              creating timestamp
+time              creating timestamp 
 */
 #include "DHT.h"
 #include <BH1750.h>
@@ -87,7 +87,7 @@ const int DHT_PIN  = 14;
  unsigned long sleepTimeMins  = 30;
  unsigned long sleepTimeMicro = sleepTimeMins * 60000000;
 
-// server URL to send data to https://plant-project-production.up.railway.app/telemetry
+// server URL to send data to https://plant-project-production.up.railway.app/telemetr
 const char* serverURL = "https://plant-project-production.up.railway.app/telemetry";
 
 
