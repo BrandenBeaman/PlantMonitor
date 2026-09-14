@@ -42,6 +42,8 @@ void sendData(const char* serverURL, String jsonData) {
     }
     else if (httpResponseCode <= 499 && httpResponseCode >= 400) {
         Serial.println("POST FAILED: DATA SIDE");
+        Serial.println("ERROR CODE: ");
+        Serial.println(httpResponseCode);
     }
      else if (httpResponseCode <= 599 && httpResponseCode >= 500) {
         Serial.println("POST FAILED: SERVER SIDE");
