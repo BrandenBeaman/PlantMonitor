@@ -87,8 +87,8 @@ const int DHT_PIN  = 14;
  unsigned long sleepTimeMins  = 30;
  unsigned long sleepTimeMicro = sleepTimeMins * 60000000;
 
-// server URL to send data to https://chic-liberation-production-4139.up.railway.app/ (test server: https://webhook.site/ed14ddf1-46ec-47dd-ab28-ae349e7b1a1a )
-const char* serverURL = "https://chic-liberation-production-4139.up.railway.app/";
+// server URL to send data to https://chic-liberation-production-4139.up.railway.app/telemetry 
+const char* serverURL = "https://chic-liberation-production-4139.up.railway.app/telemetry";
 
 
 
