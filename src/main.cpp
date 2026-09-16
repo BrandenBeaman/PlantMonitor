@@ -87,7 +87,7 @@ const int DHT_PIN  = 14;
  unsigned long sleepTimeMins  = 30;
  unsigned long sleepTimeMicro = sleepTimeMins * 60000000;
 
-// server URL to send data to https://plant-project-production.up.railway.app/telemety front end(https://chic-liberation-production-4139.up.railway.app)
+// server URL to send data to https://plant-project-production.up.railway.app/telemetry front end(https://chic-liberation-production-4139.up.railway.app)
 const char* serverURL = "https://plant-project-production.up.railway.app/telemetry";
 
 
