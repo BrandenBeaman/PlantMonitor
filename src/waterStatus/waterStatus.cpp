@@ -6,7 +6,7 @@
 // varibles of type waterStatus, using to determine which state where in, defult state is needWater, prevState is set to !state to ensure first reading is new state
 waterStatus state = needWater;
 waterStatus prevState = healthyWater;
-bool isNewState;
+
 
 
 String updateWaterStatus(int rawSoilReading) {
@@ -54,22 +54,22 @@ String updateWaterStatus(int rawSoilReading) {
         break;
       }//switch()
 
-      //check after the state has been updated, is a new state when the current state isnt equal to the previous state
-      isNewState = (state != prevState);
     
       //if its a new state eneter the switch and return the state as a string
-      if (isNewState) {
+
         switch (state) {
           case needWater:
-            return "needWater";
+            return "Needs Water";
             break;
           case healthyWater:
             return "healthy";
             break;
           case overWater:
-            return "overWater";
+            return "Over Watered";
             break;
+          default: 
+             return " "; // default case as a fall back
+             break;
         }
-      }
-      return " "; // return nothing is state didnt change 
+
     }//updateWaterStatus()
